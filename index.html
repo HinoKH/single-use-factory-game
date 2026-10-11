@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SU LAB — シングルユース工場づくり</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="core.js" defer></script>
+  <script src="missions.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html"><span class="brand-mark">SU</span><span>SU LAB<small>工場づくりラボ</small></span></a>
+    <span class="top-note">BIOPROCESS DESIGN / はじめての工場設計</span>
+    <button id="help-toggle" class="quiet" aria-expanded="false" aria-controls="help">遊び方・学習範囲</button>
+  </header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">BUILD. CONNECT. DISCOVER.</p><h1>つなげて学ぶ、<span>医薬品工場。</span></h1><p class="subtitle">バッグから原薬まで。自分の設計で、工程を動かしてみよう。</p></div>
+      <div class="intro-tag"><span class="status-dot"></span>新人エンジニアのための設計パズル<br><small>抗体医薬品 / シングルユース / 時間制限なし</small></div>
+    </section>
+    <section id="help" class="help-panel" hidden>
+      <h2>実験するように、設計しよう。</h2>
+      <p>① 左の設備を選び、空き区画をクリックして配置。②「つなぐ」で接続元をクリック。「ここへ」の設備にマウスを重ねて予定の矢印を確認し、クリックで確定。③「運転する」で結果を確認。確定済みの接続は「接続を外す」モードで線をクリックするか、右側の接続一覧の「外す」で解除できます。交差部分では対象を選びます。解除直後は「元に戻す」が使えます。</p>
+      <p>ミッション5・10で精製設備へつなぐ場合は、接続元を選んでから設備の下の入口ボタンを直接選びます。接続口はチューブを取り付ける出入口のことです。ミッション5では図解と緩衝液Aの案内で練習し、緩衝液Bは仕様書から判断します。入口を間違えたら接続を外してつなぎ直せます。</p>
+      <p>6〜8・10は「部材を扱う」で、左の部材棚を調べる →「この部材を持つ」→ ボードの取付先をクリック。容量バッグは原薬保管、接液バッグは培養、チューブは線上の「チューブ」ボタンへ取り付けます。部材は空き区画に置きません。使用済み接液部材は作業台で先に外し、新品へ交換します。架台・駆動機器は残して清掃・確認し、バッグとチューブの両方で仕様・包装・取付を確認します。確認は学習上の記録であり、実作業の代替ではありません。</p>
+      <p>9・10は「設備を移動」→ 設備 → 空き区画で通路と交換作業場所を確保します。レビューでは受入量と容量、中央通路の搬送を模式表示します。10はレビュー前に不備の場所を教えず、レビュー後の指摘から修正操作へ進めます。A型・B型の形と記号は架空の規格を見分ける教材表現です。</p>
+      <p>「接続をキャンセル」（配置中は「配置をキャンセル」）またはEscapeは、途中の選択だけを取り消します。既存の接続は残ります。「接続を外す」でも設備自体は削除しません。</p>
+      <p>1〜3では一本の工程経路を作ります。4〜10では仕様カードに従い、供給口・容量・部材・作業スペースも確認します。9・10だけは配置位置も判定します。「設備を移動」で設備→空き区画の順にクリックすると、接続を残して移動できます。</p>
+      <p><strong>学習用の概念モデルです。</strong> 実設計・GMP・無菌性の判定には使えません。回収・精製は複数工程をまとめた表現で、アニメーションは実時間や連続運転を表しません。バッグ等の接液部材と、再使用する架台・駆動機器は別物です。</p>
+    </section>
+    <nav id="stages" class="stages" aria-label="ミッション"></nav>
+    <section class="mission">
+      <div class="mission-number" id="mission-number">01</div>
+      <div><p class="eyebrow">YOUR MISSION</p><h2 id="mission-title"></h2><p id="mission-description"></p></div>
+      <div class="mission-target"><small>今回使う設備</small><span id="mission-equipment"></span></div>
+    </section>
+    <section id="specification-panel" class="specification-panel" hidden>
+      <h2>課題仕様書 <small>架空の学習用条件 / 実設計基準ではありません</small></h2>
+      <p id="specification-text"></p>
+      <section id="port-introduction" class="port-introduction" hidden>
+        <h3>接続口って何？</h3>
+        <p>チューブを取り付ける設備の出入口です。今回は、精製設備の「どの入口へ液を届けるか」を選びます。</p>
+        <div class="port-diagram"><span>抗体を含む液 → 抗体液入口</span><span>緩衝液A → 緩衝液A入口</span><span>緩衝液B → 緩衝液B入口</span><strong>精製設備（模式図）</strong></div>
+        <p>これらは複数の精製操作をまとめた架空の設備の入口です。実設備に必ずA・B専用入口があるという意味ではありません。「緩衝液A・B」は液の種類で、ミッション7の「A型・B型」は接続規格です。</p>
+        <p id="port-guidance" role="status" aria-live="polite"></p>
+      </section>
+    </section>
+    <section id="operation-guide" class="operation-guide" hidden aria-label="今回の操作">
+      <h2>今回の操作</h2><p id="operation-text"></p>
+      <div id="operation-shortcuts"></div>
+    </section>
+    <div class="workspace">
+      <aside class="palette-panel panel">
+        <div class="panel-heading"><h2>設備ライブラリー</h2><span>01 / SELECT</span></div>
+        <p class="muted">設備を選んで、空き区画へ。</p>
+        <section id="stock-panel" class="stock-panel" hidden>
+          <h3>部材棚 <small>調べる → 持つ → 取り付ける</small></h3>
+          <div id="stock-items"></div>
+          <div id="stock-detail" role="status" aria-live="polite"></div>
+        </section>
+        <details id="equipment-library" open>
+          <summary>設備を追加・役割を見る</summary>
+          <div id="palette" class="palette"></div>
+        </details>
+        <div class="material-key"><span class="bag-dot"></span>接液部材には使い捨てを採用<br><span class="frame-dot"></span>架台・駆動機器などは再使用</div>
+      </aside>
+      <section class="factory-panel panel" aria-label="設計ボード">
+        <div class="board-toolbar">
+          <div class="panel-heading"><h2>設計ボード</h2><span>02 / CONNECT</span></div>
+          <div class="tools" role="group" aria-label="編集モード">
+            <button id="connect-mode" aria-pressed="true">つなぐ</button>
+            <button id="disconnect-mode" aria-pressed="false">接続を外す</button>
+            <button id="delete-mode" aria-pressed="false">設備を削除</button>
+            <button id="move-mode" aria-pressed="false">設備を移動</button>
+            <button id="workshop-mode" aria-pressed="false" hidden>部材を扱う</button>
+          </div>
+        </div>
+        <div class="board-meta"><span><span class="status-dot"></span>CONCEPT FLOOR</span><span id="board-count">0 EQUIPMENT / 0 CONNECTIONS</span></div>
+        <div id="board" class="board">
+          <svg id="pipes" viewBox="0 0 960 480" preserveAspectRatio="none" aria-hidden="true">
+            <defs><marker id="arrow" viewBox="0 0 16 16" refX="16" refY="8" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto"><path d="M 1 1 L 15 8 L 1 15 z" fill="#126b62" stroke="white" stroke-width="1.5"/></marker></defs>
+            <g id="pipe-lines"></g>
+          </svg>
+          <div id="slots" class="slots" aria-label="設備配置区画"></div>
+          <div id="pipe-tools" class="pipe-tools"></div>
+        </div>
+        <div class="board-footer"><span id="mode-instruction">左の設備を選ぶか、配置した設備をクリックして接続します。</span><button id="cancel-selection" class="quiet">選択解除</button></div>
+        <section id="workbench" class="workbench" hidden aria-label="選んだ部位の作業台"></section>
+        <section id="review-scene" class="review-scene" hidden aria-label="レビューの模式表示" aria-live="polite"></section>
+        <section id="connection-picker" class="connection-picker" hidden aria-label="外す接続を選択">
+          <p>接続線が重なっています。外す接続を選んでください。</p>
+          <div id="connection-options"></div>
+          <button id="picker-cancel" class="quiet">閉じる</button>
+        </section>
+        <div id="disconnect-notice" class="disconnect-notice" hidden>
+          <span id="disconnect-message" role="status" aria-live="polite"></span>
+          <button id="undo-disconnect">元に戻す</button>
+        </div>
+        <div class="run-toolbar"><button id="reset" class="quiet">このステージをリセット</button><span>間違えても大丈夫。何度でも設計できます。</span><button id="run" class="primary">▶ 運転する</button></div>
+      </section>
+      <aside class="inspector panel">
+        <div class="panel-heading"><h2>ラボノート</h2><span>03 / DISCOVER</span></div>
+        <section class="feedback" id="feedback-box" data-kind="info">
+          <span class="feedback-label" id="feedback-label">READY TO BUILD</span>
+          <h3 id="feedback-title">まずは設備を置いてみよう</h3>
+          <p id="feedback-message" role="status" aria-live="polite">左の設備を選び、ボードの空き区画をクリックしてください。</p>
+          <div id="review-actions" class="review-actions"></div>
+        </section>
+        <button id="next" class="primary next" hidden>次のミッションへ →</button>
+        <section class="equipment-note"><h3 id="equipment-title">シングルユースって？</h3><p id="equipment-description">製品に触れるバッグやチューブなどに、使い捨て部材を使う仕組み。設備全体を捨てるわけではありません。</p><p id="equipment-material" class="material-note">設備を選ぶと、役割と接液部材の例をここに表示します。</p></section>
+        <section class="connections-section"><h3>接続一覧 <span id="connection-count">0</span></h3><p class="muted">設備を残して接続だけ外せます。矢印は工程の進む向きです。</p><ul id="connections"></ul></section>
+      </aside>
+    </div>
+    <footer class="page-footer"><span>SU LAB / 学習用プロトタイプ</span><span>工程・仕様・作業性。条件を満たす設計を考えよう。</span><a href="README.md">教材・参照資料</a></footer>
+  </main>
+  <dialog id="completion" aria-labelledby="completion-title" aria-describedby="completion-lesson">
+    <div class="completion-card">
+      <div class="completion-emblem" aria-hidden="true">✓</div>
+      <p class="eyebrow">DESIGN ACHIEVED</p>
+      <h2 id="completion-title">MISSION<br>COMPLETE!</h2>
+      <p id="completion-mission"></p>
+      <h3>今回できたこと</h3>
+      <p id="completion-lesson"></p>
+      <div class="completion-actions"><button id="completion-close">設計を見直す</button><button id="completion-next" class="primary">次のミッションへ →</button></div>
+      <p id="completion-finale" hidden>全10ミッションをクリア！ 学んだ条件を、実際の仕様書を読む視点につなげましょう。</p>
+    </div>
+  </dialog>
+</body>
+</html>
